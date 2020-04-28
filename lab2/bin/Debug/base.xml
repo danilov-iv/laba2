@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ArrayOfPhoneBook xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PhoneBook xsi:type="Person">
+    <name> </name>
+    <address> </address>
+    <phone> </phone>
+  </PhoneBook>
+  <PhoneBook xsi:type="Person">
+    <name>Иван Данилов</name>
+    <address>ул.Кооперативная,1</address>
+    <phone>8-950-666-66-00</phone>
+  </PhoneBook>
+  <PhoneBook xsi:type="Organization">
+    <name>Пирожок</name>
+    <address> ул.Вкусная,10</address>
+    <phone> 253-44-53</phone>
+    <fax>352-523</fax>
+    <contact> Андрей Гуров Вафлевич</contact>
+  </PhoneBook>
+  <PhoneBook xsi:type="Friend">
+    <name>Петр Киров</name>
+    <address>ул. Балдежная, 420</address>
+    <phone>8-905-325-89-98</phone>
+    <birthDate>27.11.1997</birthDate>
+  </PhoneBook>
+  <PhoneBook xsi:type="Person">
+    <name>Василий Васильев</name>
+    <address>Невский пр. 89</address>
+    <phone>8-904-345-23-23</phone>
+  </PhoneBook>
+  <PhoneBook xsi:type="Person">
+    <name>Сергей Блондин</name>
+    <address>пр. Белого, 10</address>
+    <phone>8-963-96-63</phone>
+  </PhoneBook>
+  <PhoneBook xsi:type="Organization">
+    <name>Культура</name>
+    <address>ул. Кайфовая, 1</address>
+    <phone>201-96-33</phone>
+    <fax>666-351</fax>
+    <contact>Привет Пока Досвиданьевич</contact>
+  </PhoneBook>
+</ArrayOfPhoneBook>

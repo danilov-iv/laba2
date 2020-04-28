@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace Lab2PhoneBook
 {
-
+    [XmlInclude(typeof(Person)), XmlInclude(typeof(Friend)), XmlInclude(typeof(Organization))]
+    [Serializable]
     /// <summary>
     /// абстрактный класс, обозначающий запись в телефонном справочнике
     /// </summary>
@@ -42,6 +45,7 @@ namespace Lab2PhoneBook
         /// </param>
         public void Search(string searching)
         {
+            Trace.WriteLine("PhoneBook.Search");
             if (name.Contains(searching)) printInfo();
         }
     }
@@ -62,6 +66,7 @@ namespace Lab2PhoneBook
         /// <param name="phone">Телефон</param>
         public Person(string name, string address, string phone)
         {
+            Trace.WriteLine("Person.Person");
             this.name = name;
             this.address = address;
             this.phone = phone;
@@ -71,10 +76,10 @@ namespace Lab2PhoneBook
         /// </summary>
         public override void printInfo()
         {
+            Trace.WriteLine("Person.PrintInfo");
             Console.WriteLine($"Имя: {name}\nАдрес: {address}\nТелефон: {phone}\n");
         }
     }
-
     /// <summary>
     /// Организация
     /// </summary>
@@ -103,6 +108,7 @@ namespace Lab2PhoneBook
         /// <param name="contact">Контактное лицо</param>
         public Organization(string name, string address, string phone, string fax, string contact)
         {
+            Trace.WriteLine("Organization.Organization");
             this.name = name;
             this.address = address;
             this.phone = phone;
@@ -112,6 +118,7 @@ namespace Lab2PhoneBook
 
         public override void printInfo()
         {
+            Trace.WriteLine("Organization.PrintInfo");
             Console.WriteLine($"Название: {name}\nАдрес: {address}\nТелефон: {phone}\nФакс: {fax}\nКонтактное лицо: {contact}\n");
         }
     }
@@ -138,6 +145,7 @@ namespace Lab2PhoneBook
         /// <param name="birthDate">Дата рождения</param>
         public Friend(string name, string address, string phone, string birthDate)
         {
+            Trace.WriteLine("Friend.Friend");
             this.name = name;
             this.address = address;
             this.phone = phone;
@@ -146,6 +154,7 @@ namespace Lab2PhoneBook
 
         public override void printInfo()
         {
+            Trace.WriteLine("Friend.PrintInfo");
             Console.WriteLine($"Имя: {name}\nАдрес: {address}\nТелефон: {phone}\nДата рождения: {birthDate}\n");
         }
     }
@@ -156,7 +165,7 @@ namespace Lab2PhoneBook
         /// </summary>
         /// <param name="line">Преобразуемая строка</param>
         /// <returns></returns>
-        static PhoneBook parseNote(string line)
+        static PhoneBook parseRec(string line)
         {
             string[] element = line.Split(';');
             switch (element[0])
@@ -178,34 +187,51 @@ namespace Lab2PhoneBook
         /// <returns></returns>
         static PhoneBook[] readFromFile(string fileName)
         {
-            System.IO.StreamReader file = new System.IO.StreamReader("input.txt");
+            StreamReader file = new StreamReader("input.txt", Encoding.Default);
             int n = Convert.ToInt32(file.ReadLine());
-            PhoneBook[] phoneBookDataBase = new PhoneBook[n];
+            PhoneBook[] phoneBookDB = new PhoneBook[n];
             for (int i = 0; i < n; i++)
             {
-                phoneBookDataBase[i] = parseNote(file.ReadLine());
+                phoneBookDB[i] = parseRec(file.ReadLine());
             }
-            return phoneBookDataBase;
+            return phoneBookDB;
         }
-
-
 
         static void Main(string[] args)
         {
-            PhoneBook[] phoneBase = readFromFile("input.txt");
-            Console.WriteLine("Телефонный справочник: ");
-            foreach (PhoneBook note in phoneBase)
+            XmlSerializer formatter = new XmlSerializer(typeof(PhoneBook[]));
+            PhoneBook[] phoneBase;
+            try
             {
-                note.printInfo();
+                phoneBase = readFromFile("input.txt");
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine("Не найден исходный файл:");
+                Console.WriteLine(e.FileName);
+                return;
             }
 
-            Console.Write("Для поиска записи введите фамилию человека или название организации: ");
-            string nameForSearch = Console.ReadLine();
-            foreach (PhoneBook note in phoneBase)
+            Console.WriteLine("Телефонный справочник: \n");
+            foreach (PhoneBook record in phoneBase)
             {
-                note.Search(nameForSearch);
+                record.printInfo();
             }
+
+            Console.Write("Поиск в базе по фамилии/названию: ");
+            string searching = Console.ReadLine();
+            foreach (PhoneBook record in phoneBase)
+            {
+                record.Search(searching);
+            }
+
+            using (FileStream fs = new FileStream("base.xml", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, phoneBase);
+            }
+
             Console.ReadKey();
         }
+
     }
 }
